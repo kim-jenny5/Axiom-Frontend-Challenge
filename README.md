@@ -88,9 +88,10 @@ feature-stuffed one every time.
 
 ## Submitting
 
-1. Fork this repository.
+1. Fork this repository. Make it private.
 2. Commit your changes along with your `DESIGN.md`.
-3. Send us a link to your fork.
+3. Share the fork with knownotunknown
+4. Email a link to the repo to som.gupta@axiom.trading
 
 ## Project layout
 
