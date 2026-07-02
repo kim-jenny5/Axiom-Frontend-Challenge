@@ -1,30 +1,50 @@
-import type { Token } from "../types";
-import { TokenRow } from "./TokenRow";
+import { useRef } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import type { Token } from '../types';
+import { TokenRow } from './TokenRow';
+
+const ROW_HEIGHT = 52;
+const OVERSCAN = 5;
 
 interface TokenListProps {
-  tokens: Token[];
-  selectedId: string | null;
-  onSelect: (id: string) => void;
+	tokens: Token[];
+	selectedId: string | null;
+	onSelect: (id: string) => void;
 }
 
-/**
- * Renders the feed.
- *
- * NOTE: this maps over every token and mounts a DOM node for each one. With a
- * few hundred rows that's fine; with tens of thousands of live-updating rows it
- * is not. This is the part of the app the challenge is about.
- */
 export function TokenList({ tokens, selectedId, onSelect }: TokenListProps) {
-  return (
-    <div className="feed__list">
-      {tokens.map((token) => (
-        <TokenRow
-          key={token.id}
-          token={token}
-          selected={token.id === selectedId}
-          onSelect={onSelect}
-        />
-      ))}
-    </div>
-  );
+	const parentRef = useRef<HTMLDivElement>(null);
+
+	const virtualizer = useVirtualizer({
+		count: tokens.length,
+		getScrollElement: () => parentRef.current,
+		estimateSize: () => ROW_HEIGHT,
+		overscan: OVERSCAN
+	});
+
+	const totalSize = virtualizer.getTotalSize();
+	const virtualItems = virtualizer.getVirtualItems();
+
+	return (
+		<div ref={parentRef} className='feed__list'>
+			<div className='feed__virtual-inner' style={{ height: totalSize }}>
+				{virtualItems.map((item) => {
+					const token = tokens[item.index];
+					return (
+						<div
+							key={token.id}
+							className='feed__virtual-row'
+							style={{ transform: `translateY(${item.start}px)` }}
+						>
+							<TokenRow
+								token={token}
+								selected={token.id === selectedId}
+								onSelect={onSelect}
+							/>
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	);
 }

@@ -129,6 +129,17 @@ body {
   overflow-x: hidden;
 }
 
+.feed__virtual-inner {
+  position: relative;
+}
+
+.feed__virtual-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
 .row {
   height: 52px;
   border-bottom: 1px solid var(--border);
